@@ -1,0 +1,19 @@
+id: httpie
+name: httpie
+type: cli-tool
+description: 人性化的 HTTP 客户端，比 curl 更易用
+tags: [http, api, productivity]
+difficulty: beginner
+install:
+  method: brew
+  package: httpie
+quickstart:
+  - title: GET 请求
+    command: "http httpbin.org/get"
+    explain: 发送 GET 请求，自动格式化 JSON 响应
+  - title: POST 请求
+    command: "http POST httpbin.org/post name=test age:=25"
+    explain: 发送 POST 请求，=表示字符串，:=表示数字/布尔值
+  - title: 带认证请求
+    command: "http -a user:pass httpbin.org/basic-auth/user/pass"
+    explain: 发送带 Basic Auth 的请求

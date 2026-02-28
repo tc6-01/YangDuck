@@ -1,0 +1,44 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Copy recipes to embed
+        run: |
+          rm -rf internal/recipe/embedded/*
+          cp -r recipes/* internal/recipe/embedded/
+
+      - name: Build macOS arm64
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+        run: go build -o yduck-darwin-arm64 ./cmd/yduck/
+
+      - name: Build macOS amd64
+        env:
+          GOOS: darwin
+          GOARCH: amd64
+        run: go build -o yduck-darwin-amd64 ./cmd/yduck/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            yduck-darwin-arm64
+            yduck-darwin-amd64
+          generate_release_notes: true

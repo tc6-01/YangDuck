@@ -1,0 +1,19 @@
+id: jq
+name: jq
+type: cli-tool
+description: 命令行 JSON 处理工具，格式化和提取 JSON 数据
+tags: [json, productivity, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: jq
+quickstart:
+  - title: 格式化 JSON
+    command: "echo '{\"name\":\"test\"}' | jq ."
+    explain: 把压缩的 JSON 格式化成易读的格式
+  - title: 提取字段
+    command: "cat data.json | jq '.name'"
+    explain: 从 JSON 中提取指定字段的值
+  - title: 过滤数组
+    command: "cat list.json | jq '.[] | select(.age > 18)'"
+    explain: 筛选数组中符合条件的元素

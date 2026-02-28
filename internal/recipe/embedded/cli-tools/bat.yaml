@@ -1,0 +1,19 @@
+id: bat
+name: bat
+type: cli-tool
+description: 带语法高亮的 cat 替代品，查看文件内容更清晰
+tags: [productivity, file, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: bat
+quickstart:
+  - title: 查看文件
+    command: "bat README.md"
+    explain: 查看文件内容，自动语法高亮和行号
+  - title: 显示差异
+    command: "bat --diff file1 file2"
+    explain: 对比两个文件的差异
+  - title: 替代 cat
+    command: "alias cat='bat'"
+    explain: 把这行加到 ~/.zshrc 中，以后 cat 就自带高亮了

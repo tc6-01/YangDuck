@@ -1,0 +1,16 @@
+id: tldr
+name: tldr
+type: cli-tool
+description: 简化版命令帮助手册，用实例教你怎么用命令
+tags: [help, productivity, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: tldr
+quickstart:
+  - title: 查看命令用法
+    command: "tldr tar"
+    explain: 查看 tar 命令的常用用法示例，比 man 简单很多
+  - title: 搜索命令
+    command: "tldr --search 'compress'"
+    explain: 搜索跟压缩相关的命令

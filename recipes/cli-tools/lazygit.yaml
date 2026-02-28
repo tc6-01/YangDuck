@@ -1,0 +1,19 @@
+id: lazygit
+name: lazygit
+type: cli-tool
+description: 终端 Git 图形界面，让 Git 操作变得简单直观
+tags: [git, productivity, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: lazygit
+quickstart:
+  - title: 启动
+    command: "lazygit"
+    explain: 在 Git 仓库里输入 lazygit 就能打开图形界面
+  - title: 常用操作
+    command: "空格键暂存文件，c 提交，p 推送"
+    explain: 空格键选中文件暂存，按 c 填写提交信息，按 p 推送到远程
+  - title: 分支管理
+    command: "按数字 3 切到分支面板"
+    explain: 在分支面板里可以创建、切换、合并分支

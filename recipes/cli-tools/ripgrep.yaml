@@ -1,0 +1,19 @@
+id: ripgrep
+name: ripgrep
+type: cli-tool
+description: 超快的文本搜索工具，比 grep 快几十倍
+tags: [search, productivity, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: ripgrep
+quickstart:
+  - title: 搜索文本
+    command: "rg '搜索内容'"
+    explain: 在当前目录及子目录中搜索包含指定内容的文件
+  - title: 指定文件类型
+    command: "rg --type go 'func main'"
+    explain: 只在 Go 文件中搜索 func main
+  - title: 忽略大小写
+    command: "rg -i 'hello'"
+    explain: 忽略大小写搜索 hello

@@ -1,0 +1,8 @@
+id: ai-starter
+name: AI 工具入门套餐
+type: bundle
+description: 快速配置 AI 编码助手的常用扩展
+tags: [ai, starter, mcp]
+includes:
+  - fetch-mcp
+  - filesystem-mcp

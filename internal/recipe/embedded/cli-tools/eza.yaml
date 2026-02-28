@@ -1,0 +1,22 @@
+id: eza
+name: eza
+type: cli-tool
+description: 现代化的 ls 替代品，带颜色、图标和 Git 状态
+tags: [productivity, file, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: eza
+quickstart:
+  - title: 列出文件
+    command: "eza"
+    explain: 列出当前目录文件，自带颜色和分类
+  - title: 显示详情
+    command: "eza -la"
+    explain: 显示文件详情，包括隐藏文件
+  - title: 树形显示
+    command: "eza --tree --level=2"
+    explain: 以树形结构展示目录，限制深度为 2 层
+  - title: 显示 Git 状态
+    command: "eza -la --git"
+    explain: 文件列表中显示 Git 修改状态

@@ -1,0 +1,29 @@
+id: fetch-mcp
+name: Fetch MCP
+type: mcp
+description: 让 AI 助手访问网页和 API，获取实时信息
+tags: [http, api, web]
+difficulty: beginner
+install:
+  method: npm
+  package: "@anthropic/mcp-fetch"
+targets:
+  cursor:
+    config_path: ".cursor/mcp.json"
+    config:
+      mcpServers:
+        fetch:
+          command: "npx"
+          args: ["-y", "@anthropic/mcp-fetch"]
+  claude-code:
+    config_path: "~/.claude/claude_desktop_config.json"
+    config:
+      mcpServers:
+        fetch:
+          command: "npx"
+          args: ["-y", "@anthropic/mcp-fetch"]
+quickstart:
+  - title: 试试看
+    explain: 重启 Cursor，然后问 AI："帮我获取 https://api.github.com 的内容"
+  - title: 抓取网页
+    explain: 问 AI："帮我获取某个网页的内容并总结"

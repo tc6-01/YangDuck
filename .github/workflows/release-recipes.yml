@@ -1,0 +1,31 @@
+name: Release Recipes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'recipes/**'
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Build index and validate schemas
+        run: go run scripts/build-index.go
+
+      - name: Upload recipes index
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: recipes-latest
+          files: recipes-index.json
+          body: "Auto-published recipe index"
+          prerelease: true

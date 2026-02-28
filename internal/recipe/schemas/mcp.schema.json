@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCP Recipe",
+  "type": "object",
+  "required": ["id", "name", "type", "description", "targets"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["mcp"] },
+    "description": { "type": "string", "minLength": 1 },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "difficulty": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+    "install": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string", "enum": ["npm", "pip", "brew", "docker"] },
+        "package": { "type": "string" },
+        "post_install": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "object",
+          "required": ["config_path", "config"],
+          "properties": {
+            "config_path": { "type": "string" },
+            "config": { "type": "object" }
+          }
+        },
+        "claude-code": {
+          "type": "object",
+          "required": ["config_path", "config"],
+          "properties": {
+            "config_path": { "type": "string" },
+            "config": { "type": "object" }
+          }
+        }
+      }
+    },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "ask"],
+        "properties": {
+          "key": { "type": "string" },
+          "ask": { "type": "string" },
+          "default": { "type": "string" },
+          "secret": { "type": "boolean" }
+        }
+      }
+    },
+    "quickstart": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "explain"],
+        "properties": {
+          "title": { "type": "string" },
+          "command": { "type": "string" },
+          "explain": { "type": "string" }
+        }
+      }
+    }
+  }
+}

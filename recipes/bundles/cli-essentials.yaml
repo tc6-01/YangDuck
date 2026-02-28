@@ -1,0 +1,14 @@
+id: cli-essentials
+name: CLI 必备工具包
+type: bundle
+description: 每个开发者都应该有的命令行工具集合
+tags: [essential, starter]
+includes:
+  - fzf
+  - ripgrep
+  - bat
+  - eza
+  - jq
+  - fd
+  - lazygit
+  - tldr

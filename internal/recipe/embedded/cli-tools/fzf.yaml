@@ -1,0 +1,21 @@
+id: fzf
+name: fzf
+type: cli-tool
+description: 命令行模糊搜索工具，让你快速找到文件、历史命令
+tags: [search, productivity, essential]
+difficulty: beginner
+install:
+  method: brew
+  package: fzf
+  post_install:
+    - "$(brew --prefix)/opt/fzf/install --all --no-bash --no-fish"
+quickstart:
+  - title: 搜索历史命令
+    command: "Ctrl+R"
+    explain: 在终端按 Ctrl+R，输入关键词就能模糊搜索历史命令
+  - title: 搜索文件
+    command: "fzf"
+    explain: 直接输入 fzf，会列出当前目录所有文件，输入关键词过滤
+  - title: 配合其他命令
+    command: "code $(fzf)"
+    explain: 用 fzf 选中文件后直接用编辑器打开

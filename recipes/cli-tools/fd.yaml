@@ -1,0 +1,19 @@
+id: fd
+name: fd
+type: cli-tool
+description: 更快更友好的 find 替代品
+tags: [search, file, productivity]
+difficulty: beginner
+install:
+  method: brew
+  package: fd
+quickstart:
+  - title: 搜索文件
+    command: "fd readme"
+    explain: 在当前目录递归搜索文件名包含 readme 的文件
+  - title: 按类型过滤
+    command: "fd -e go"
+    explain: 只搜索 .go 后缀的文件
+  - title: 排除目录
+    command: "fd -E node_modules"
+    explain: 搜索时排除 node_modules 目录

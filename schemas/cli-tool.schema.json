@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CLI Tool Recipe",
+  "type": "object",
+  "required": ["id", "name", "type", "description", "install"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["cli-tool"] },
+    "description": { "type": "string", "minLength": 1 },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "difficulty": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+    "install": {
+      "type": "object",
+      "required": ["method", "package"],
+      "properties": {
+        "method": { "type": "string", "enum": ["brew"] },
+        "package": { "type": "string", "minLength": 1 },
+        "post_install": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "quickstart": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "explain"],
+        "properties": {
+          "title": { "type": "string" },
+          "command": { "type": "string" },
+          "explain": { "type": "string" }
+        }
+      }
+    }
+  }
+}

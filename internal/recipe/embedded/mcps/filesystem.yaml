@@ -1,0 +1,33 @@
+id: filesystem-mcp
+name: Filesystem MCP
+type: mcp
+description: 让 AI 助手安全地读写你的本地文件
+tags: [filesystem, file]
+difficulty: beginner
+install:
+  method: npm
+  package: "@anthropic/mcp-filesystem"
+targets:
+  cursor:
+    config_path: ".cursor/mcp.json"
+    config:
+      mcpServers:
+        filesystem:
+          command: "npx"
+          args: ["-y", "@anthropic/mcp-filesystem", "ALLOWED_DIR"]
+  claude-code:
+    config_path: "~/.claude/claude_desktop_config.json"
+    config:
+      mcpServers:
+        filesystem:
+          command: "npx"
+          args: ["-y", "@anthropic/mcp-filesystem", "ALLOWED_DIR"]
+prompts:
+  - key: ALLOWED_DIR
+    ask: "允许 AI 访问的目录路径"
+    default: "."
+quickstart:
+  - title: 试试看
+    explain: 重启 Cursor，然后问 AI："帮我列出当前目录的文件结构"
+  - title: 读文件
+    explain: 问 AI："帮我读取 package.json 的内容"
