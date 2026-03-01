@@ -1,0 +1,25 @@
+# 编译产物
+/yduck
+yduck-darwin-*
+yduck-linux-*
+*.exe
+
+# 生成文件
+recipes-index.json
+
+# 依赖
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# 环境变量
+.env
+.env.*
