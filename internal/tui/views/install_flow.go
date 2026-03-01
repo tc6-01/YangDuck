@@ -69,14 +69,7 @@ func (f *InstallFlow) InstallRecipeSilent(rec recipe.Recipe) error {
 		}
 		return f.Brew.RunPostInstall(rec.Install.PostInstall)
 	case recipe.TypeMCP:
-		targets := []string{}
-		if rec.Targets != nil && rec.Targets.Cursor != nil {
-			targets = append(targets, "cursor")
-		}
-		if rec.Targets != nil && rec.Targets.ClaudeCode != nil {
-			targets = append(targets, "claude-code")
-		}
-		for _, t := range targets {
+		for _, t := range f.mcpTargets(rec) {
 			if err := f.MCP.Install(&rec, t, nil); err != nil {
 				return err
 			}
@@ -101,7 +94,12 @@ func (f *InstallFlow) IsRecipeInstalled(rec recipe.Recipe) (bool, string) {
 		}
 		return f.Brew.IsInstalled(rec.Install.Package)
 	case recipe.TypeMCP:
-		return f.MCP.IsConfigured(&rec, "cursor"), ""
+		for _, t := range f.mcpTargets(rec) {
+			if f.MCP.IsConfigured(&rec, t) {
+				return true, ""
+			}
+		}
+		return false, ""
 	case recipe.TypeSkill:
 		return f.Skill.IsInstalled(&rec), ""
 	case recipe.TypeCommand:
@@ -214,13 +212,7 @@ func (f *InstallFlow) installMCP(rec recipe.Recipe) error {
 		promptValues[p.Key] = val
 	}
 
-	targets := []string{}
-	if rec.Targets != nil && rec.Targets.Cursor != nil {
-		targets = append(targets, "cursor")
-	}
-	if rec.Targets != nil && rec.Targets.ClaudeCode != nil {
-		targets = append(targets, "claude-code")
-	}
+	targets := f.mcpTargets(rec)
 
 	fmt.Println()
 	for _, t := range targets {
@@ -373,4 +365,15 @@ func (f *InstallFlow) showQuickstart(rec recipe.Recipe) {
 		fmt.Println(s.NoteStyle.Render(qs.Explain))
 	}
 	fmt.Println()
+}
+
+func (f *InstallFlow) mcpTargets(rec recipe.Recipe) []string {
+	var targets []string
+	if rec.Targets != nil && rec.Targets.Cursor != nil && f.Config.ShouldInstallFor("cursor") {
+		targets = append(targets, "cursor")
+	}
+	if rec.Targets != nil && rec.Targets.ClaudeCode != nil && f.Config.ShouldInstallFor("claude-code") {
+		targets = append(targets, "claude-code")
+	}
+	return targets
 }

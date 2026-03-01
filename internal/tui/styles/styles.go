@@ -3,13 +3,13 @@ package styles
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	ColorPrimary   = lipgloss.Color("#22d3ee")
-	ColorSecondary = lipgloss.Color("#818cf8")
-	ColorSuccess   = lipgloss.Color("#32CD32")
-	ColorError     = lipgloss.Color("#FF6347")
-	ColorMuted     = lipgloss.Color("#808080")
-	ColorWhite     = lipgloss.Color("#FFFFFF")
-	ColorWarning   = lipgloss.Color("#FFA500")
+	ColorPrimary   = lipgloss.AdaptiveColor{Light: "#0891b2", Dark: "#22d3ee"}
+	ColorSecondary = lipgloss.AdaptiveColor{Light: "#6366f1", Dark: "#818cf8"}
+	ColorSuccess   = lipgloss.AdaptiveColor{Light: "#16a34a", Dark: "#32CD32"}
+	ColorError     = lipgloss.AdaptiveColor{Light: "#dc2626", Dark: "#FF6347"}
+	ColorMuted     = lipgloss.AdaptiveColor{Light: "#6b7280", Dark: "#808080"}
+	ColorText      = lipgloss.AdaptiveColor{Light: "#1f2937", Dark: "#e5e7eb"}
+	ColorWarning   = lipgloss.AdaptiveColor{Light: "#d97706", Dark: "#FFA500"}
 
 	TitleStyle = lipgloss.NewStyle().
 			Bold(true).
@@ -47,8 +47,8 @@ var (
 
 	ActiveTabStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(ColorPrimary).
-			Background(lipgloss.Color("#1a3a4a")).
+			Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#22d3ee"}).
+			Background(lipgloss.AdaptiveColor{Light: "#0891b2", Dark: "#1a3a4a"}).
 			Padding(0, 1)
 
 	InactiveTabStyle = lipgloss.NewStyle().
@@ -74,7 +74,7 @@ var (
 				Foreground(ColorPrimary)
 
 	NormalItemStyle = lipgloss.NewStyle().
-			Foreground(ColorWhite)
+			Foreground(ColorText)
 
 	InstalledBadge = lipgloss.NewStyle().
 			Foreground(ColorSuccess).
@@ -91,10 +91,10 @@ var (
 				Width(10)
 
 	DetailValueStyle = lipgloss.NewStyle().
-				Foreground(ColorWhite)
+				Foreground(ColorText)
 
 	TagStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#1a1a2e")).
+			Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#1a1a2e"}).
 			Background(ColorPrimary).
 			Padding(0, 1)
 
@@ -128,7 +128,7 @@ var (
 				Bold(true)
 
 	SearchInputStyle = lipgloss.NewStyle().
-				Foreground(ColorWhite)
+				Foreground(ColorText)
 
 	EmptyStateStyle = lipgloss.NewStyle().
 			Foreground(ColorMuted).

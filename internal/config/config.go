@@ -15,9 +15,18 @@ const (
 	ModeAdvanced Mode = "advanced"
 )
 
+type Editor string
+
+const (
+	EditorCursor    Editor = "cursor"
+	EditorClaudeCode Editor = "claude-code"
+	EditorBoth      Editor = "both"
+)
+
 type Config struct {
-	Mode          Mode   `yaml:"mode"`
-	CachePath     string `yaml:"cache_path"`
+	Mode           Mode   `yaml:"mode"`
+	Editor         Editor `yaml:"editor,omitempty"`
+	CachePath      string `yaml:"cache_path"`
 	LastUpdateCheck string `yaml:"last_update_check,omitempty"`
 }
 
@@ -81,4 +90,21 @@ func (c *Config) IsFirstTime() bool {
 func (c *Config) SetMode(m Mode) error {
 	c.Mode = m
 	return c.Save()
+}
+
+func (c *Config) SetEditor(e Editor) error {
+	c.Editor = e
+	return c.Save()
+}
+
+func (c *Config) ShouldInstallFor(target string) bool {
+	switch c.Editor {
+	case EditorCursor:
+		return target == "cursor"
+	case EditorClaudeCode:
+		return target == "claude-code"
+	case EditorBoth, "":
+		return true
+	}
+	return true
 }

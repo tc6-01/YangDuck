@@ -186,6 +186,7 @@ func (a *App) runFirstTime() error {
 	fmt.Println()
 
 	var identity string
+	var editor string
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
@@ -197,6 +198,17 @@ func (a *App) runFirstTime() error {
 				).
 				Value(&identity),
 		),
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("你使用的 AI 编码工具是？").
+				Description("MCP、Skill、Rule 等配方会安装到对应工具的配置目录").
+				Options(
+					huh.NewOption("🖥️  Cursor", "cursor"),
+					huh.NewOption("🤖 Claude Code", "claude-code"),
+					huh.NewOption("📦 两个都用", "both"),
+				).
+				Value(&editor),
+		),
 	)
 	if err := form.Run(); err != nil {
 		return err
@@ -205,8 +217,12 @@ func (a *App) runFirstTime() error {
 	if identity == "advanced" {
 		_ = a.config.SetMode(config.ModeAdvanced)
 		fmt.Println(s.SuccessStyle.Render("  ✓ 已切换到高级模式"))
-		fmt.Println()
 	}
+
+	a.config.Editor = config.Editor(editor)
+	editorNames := map[string]string{"cursor": "Cursor", "claude-code": "Claude Code", "both": "Cursor + Claude Code"}
+	fmt.Println(s.SuccessStyle.Render("  ✓ AI 工具: " + editorNames[editor]))
+	fmt.Println()
 
 	return a.config.Save()
 }
