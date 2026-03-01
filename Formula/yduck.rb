@@ -5,10 +5,10 @@ class Yduck < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/tc6-01/YangDuck/releases/download/v${VERSION}/yduck-darwin-arm64"
+      url "https://gh-proxy.com/https://github.com/tc6-01/YangDuck/releases/download/v${VERSION}/yduck-darwin-arm64"
       sha256 "${SHA256_ARM64}"
     else
-      url "https://github.com/tc6-01/YangDuck/releases/download/v${VERSION}/yduck-darwin-amd64"
+      url "https://gh-proxy.com/https://github.com/tc6-01/YangDuck/releases/download/v${VERSION}/yduck-darwin-amd64"
       sha256 "${SHA256_AMD64}"
     end
   end
