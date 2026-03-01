@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	ylog "github.com/yangduck/yduck/internal/log"
 	"github.com/yangduck/yduck/internal/recipe"
 	"gopkg.in/yaml.v3"
 )
@@ -25,6 +26,7 @@ func New(outputDir string) (*Generator, error) {
 }
 
 func (g *Generator) GenerateCLITool(pkg string) (*recipe.Recipe, error) {
+	ylog.S.Infow("generating cli-tool recipe", "package", pkg)
 	info, err := CollectBrewInfo(pkg)
 	if err != nil {
 		return nil, fmt.Errorf("采集信息失败: %w", err)
@@ -38,6 +40,7 @@ func (g *Generator) GenerateCLITool(pkg string) (*recipe.Recipe, error) {
 
 	rec, err := parseYAMLRecipe(yamlStr)
 	if err != nil {
+		ylog.S.Warnw("yaml parse failed, retrying", "package", pkg, "error", err)
 		retryPrompt := prompt + "\n\n上次生成的 YAML 有格式错误: " + err.Error() + "\n请修正后重新生成。"
 		yamlStr, err = g.ai.Generate(retryPrompt)
 		if err != nil {
@@ -53,10 +56,12 @@ func (g *Generator) GenerateCLITool(pkg string) (*recipe.Recipe, error) {
 	if err := writeRecipe(outPath, yamlStr); err != nil {
 		return nil, err
 	}
+	ylog.S.Infow("cli-tool recipe generated", "id", rec.ID, "path", outPath)
 	return rec, nil
 }
 
 func (g *Generator) GenerateMCP(pkg string) (*recipe.Recipe, error) {
+	ylog.S.Infow("generating mcp recipe", "package", pkg)
 	info, err := CollectNPMInfo(pkg)
 	if err != nil {
 		return nil, fmt.Errorf("采集信息失败: %w", err)
@@ -70,6 +75,7 @@ func (g *Generator) GenerateMCP(pkg string) (*recipe.Recipe, error) {
 
 	rec, err := parseYAMLRecipe(yamlStr)
 	if err != nil {
+		ylog.S.Warnw("yaml parse failed, retrying", "package", pkg, "error", err)
 		retryPrompt := prompt + "\n\n上次生成的 YAML 有格式错误: " + err.Error() + "\n请修正后重新生成。"
 		yamlStr, err = g.ai.Generate(retryPrompt)
 		if err != nil {
@@ -85,6 +91,7 @@ func (g *Generator) GenerateMCP(pkg string) (*recipe.Recipe, error) {
 	if err := writeRecipe(outPath, yamlStr); err != nil {
 		return nil, err
 	}
+	ylog.S.Infow("mcp recipe generated", "id", rec.ID, "path", outPath)
 	return rec, nil
 }
 
@@ -106,14 +113,14 @@ func (g *Generator) GenerateFromBrewfile(path string) ([]string, error) {
 			if pkg == "" {
 				continue
 			}
-			fmt.Printf("正在生成 %s...\n", pkg)
+			ylog.S.Infow("generating from brewfile entry", "package", pkg)
 			rec, err := g.GenerateCLITool(pkg)
 			if err != nil {
-				fmt.Printf("⚠ %s 跳过: %v\n", pkg, err)
+				ylog.S.Warnw("skipped brewfile entry", "package", pkg, "error", err)
 				continue
 			}
 			generated = append(generated, rec.ID)
-			fmt.Printf("✓ %s.yaml\n", rec.ID)
+			ylog.S.Infow("generated recipe", "id", rec.ID)
 		}
 	}
 	return generated, nil
@@ -146,14 +153,14 @@ func (g *Generator) GenerateFromMCPConfig(path string) ([]string, error) {
 		if pkg == "" {
 			pkg = name
 		}
-		fmt.Printf("正在生成 %s...\n", name)
+		ylog.S.Infow("generating from mcp config entry", "name", name, "package", pkg)
 		rec, err := g.GenerateMCP(pkg)
 		if err != nil {
-			fmt.Printf("⚠ %s 跳过: %v\n", name, err)
+			ylog.S.Warnw("skipped mcp entry", "name", name, "error", err)
 			continue
 		}
 		generated = append(generated, rec.ID)
-		fmt.Printf("✓ %s.yaml\n", rec.ID)
+		ylog.S.Infow("generated mcp recipe", "id", rec.ID)
 	}
 	return generated, nil
 }

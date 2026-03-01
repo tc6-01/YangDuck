@@ -1,0 +1,23 @@
+name: Validate Recipes
+
+on:
+  pull_request:
+    paths:
+      - 'recipes/**'
+      - 'internal/recipe/schemas/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Validate recipe schemas
+        run: go run scripts/build-index.go
+
+      - name: Check generated index is valid JSON
+        run: python3 -c "import json; json.load(open('recipes-index.json'))"

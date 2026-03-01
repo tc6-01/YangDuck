@@ -163,6 +163,14 @@ targets:
           command: "npx"
           args: ["-y", "<npm包名>"]
           env: <如果需要环境变量>
+  claude-code:
+    config_path: "~/.claude.json"
+    config:
+      mcpServers:
+        <server-name>:
+          command: "npx"
+          args: ["-y", "<npm包名>"]
+          env: <如果需要环境变量，和 cursor 保持一致>
 prompts: <如果有需要用户填写的配置>
   - key: <环境变量名>
     ask: "<用中文问用户>"
@@ -171,6 +179,7 @@ quickstart:
   - title: 试试看
     explain: <用中文告诉用户安装后怎么用>
 `)
+		sb.WriteString("\n注意：targets 必须同时包含 cursor 和 claude-code 两个目标。config_path 固定为上述值，config 下必须有 mcpServers 字段。\n")
 	}
 	return sb.String()
 }

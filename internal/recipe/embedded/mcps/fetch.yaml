@@ -16,7 +16,7 @@ targets:
           command: "npx"
           args: ["-y", "@anthropic/mcp-fetch"]
   claude-code:
-    config_path: "~/.claude/claude_desktop_config.json"
+    config_path: "~/.claude.json"
     config:
       mcpServers:
         fetch:

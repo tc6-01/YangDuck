@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yangduck/yduck/internal/config"
 	"github.com/yangduck/yduck/internal/installer"
+	ylog "github.com/yangduck/yduck/internal/log"
 	"github.com/yangduck/yduck/internal/recipe"
 )
 
@@ -211,9 +212,11 @@ func (a *App) runQuickStart() error {
 		}
 		err := a.installRecipeSilent(sub)
 		if err != nil {
+			ylog.S.Errorw("quick start install failed", "recipe", sub.ID, "error", err)
 			fmt.Printf("  %s 安装失败: %s\n", crossStyle.Render("✗"), err.Error())
 			failed++
 		} else {
+			ylog.S.Infow("quick start installed", "recipe", sub.ID)
 			fmt.Printf("  %s %s 安装完成\n", checkStyle.Render("✓"), sub.Name)
 			installed++
 		}
@@ -466,6 +469,7 @@ func (a *App) installMCP(rec recipe.Recipe) error {
 		targetName := map[string]string{"cursor": "Cursor", "claude-code": "Claude Code"}[t]
 		fmt.Printf("  %s 正在写入 %s 配置...\n", stepStyle.Render("▸"), targetName)
 		if err := a.mcp.Install(&rec, t, promptValues); err != nil {
+			ylog.S.Errorw("mcp config write failed", "target", t, "recipe", rec.ID, "error", err)
 			fmt.Printf("  %s %s 配置失败: %s\n", crossStyle.Render("✗"), targetName, err.Error())
 			continue
 		}
@@ -590,9 +594,11 @@ func (a *App) runBundles() error {
 		fmt.Printf("\n  [%d/%d] 正在安装 %s...\n", i+1, total, stepStyle.Render(sub.Name))
 		err := a.installRecipeSilent(sub)
 		if err != nil {
+			ylog.S.Errorw("bundle item install failed", "recipe", sub.ID, "error", err)
 			fmt.Printf("  %s 失败: %s\n", crossStyle.Render("✗"), err.Error())
 			failedN++
 		} else {
+			ylog.S.Infow("bundle item installed", "recipe", sub.ID)
 			fmt.Printf("  %s %s 完成\n", checkStyle.Render("✓"), sub.Name)
 			installed++
 		}

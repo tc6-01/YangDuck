@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	ylog "github.com/yangduck/yduck/internal/log"
 	"github.com/yangduck/yduck/internal/recipe"
 )
 
@@ -34,6 +35,8 @@ func (m *MCPInstaller) Install(rec *recipe.Recipe, target string, promptValues m
 	}
 
 	configPath := expandPath(tc.ConfigPath)
+	ylog.S.Debugw("writing mcp config", "target", target, "path", configPath)
+
 	if err := os.MkdirAll(filepath.Dir(configPath), 0o755); err != nil {
 		return fmt.Errorf("create config dir: %w", err)
 	}
@@ -43,6 +46,7 @@ func (m *MCPInstaller) Install(rec *recipe.Recipe, target string, promptValues m
 		_ = json.Unmarshal(data, &existing)
 		backup := configPath + ".backup"
 		_ = os.WriteFile(backup, data, 0o644)
+		ylog.S.Debugw("backed up existing config", "backup", backup)
 	}
 
 	newConfig := substitutePrompts(tc.Config, promptValues)
@@ -52,7 +56,12 @@ func (m *MCPInstaller) Install(rec *recipe.Recipe, target string, promptValues m
 	if err != nil {
 		return fmt.Errorf("marshal config: %w", err)
 	}
-	return os.WriteFile(configPath, data, 0o644)
+	if err := os.WriteFile(configPath, data, 0o644); err != nil {
+		ylog.S.Errorw("failed to write config", "path", configPath, "error", err)
+		return err
+	}
+	ylog.S.Infow("mcp config written", "target", target, "path", configPath)
+	return nil
 }
 
 func (m *MCPInstaller) IsConfigured(rec *recipe.Recipe, target string) bool {

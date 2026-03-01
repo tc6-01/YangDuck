@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+
+	ylog "github.com/yangduck/yduck/internal/log"
 )
 
 type BrewInstaller struct{}
@@ -34,10 +36,16 @@ func (b *BrewInstaller) IsInstalled(pkg string) (bool, string) {
 }
 
 func (b *BrewInstaller) Install(pkg string) error {
+	ylog.S.Debugw("brew install", "package", pkg)
 	cmd := exec.Command("brew", "install", pkg)
 	cmd.Stdout = nil
 	cmd.Stderr = nil
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		ylog.S.Errorw("brew install failed", "package", pkg, "error", err)
+		return err
+	}
+	ylog.S.Infow("brew install succeeded", "package", pkg)
+	return nil
 }
 
 func (b *BrewInstaller) Upgrade(pkg string) error {
@@ -49,8 +57,10 @@ func (b *BrewInstaller) Upgrade(pkg string) error {
 
 func (b *BrewInstaller) RunPostInstall(commands []string) error {
 	for _, c := range commands {
+		ylog.S.Debugw("running post_install", "command", c)
 		cmd := exec.Command("sh", "-c", c)
 		if err := cmd.Run(); err != nil {
+			ylog.S.Warnw("post_install failed", "command", c, "error", err)
 			return fmt.Errorf("post_install %q: %w", c, err)
 		}
 	}

@@ -25,16 +25,28 @@
           "type": "object",
           "required": ["config_path", "config"],
           "properties": {
-            "config_path": { "type": "string" },
-            "config": { "type": "object" }
+            "config_path": { "type": "string", "enum": [".cursor/mcp.json"] },
+            "config": {
+              "type": "object",
+              "required": ["mcpServers"],
+              "properties": {
+                "mcpServers": { "type": "object", "minProperties": 1 }
+              }
+            }
           }
         },
         "claude-code": {
           "type": "object",
           "required": ["config_path", "config"],
           "properties": {
-            "config_path": { "type": "string" },
-            "config": { "type": "object" }
+            "config_path": { "type": "string", "enum": ["~/.claude.json"] },
+            "config": {
+              "type": "object",
+              "required": ["mcpServers"],
+              "properties": {
+                "mcpServers": { "type": "object", "minProperties": 1 }
+              }
+            }
           }
         }
       }

@@ -9,10 +9,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/yangduck/yduck/internal/config"
+	"github.com/yangduck/yduck/internal/generator"
 	"github.com/yangduck/yduck/internal/installer"
+	ylog "github.com/yangduck/yduck/internal/log"
 	"github.com/yangduck/yduck/internal/quickstart"
 	"github.com/yangduck/yduck/internal/recipe"
-	"github.com/yangduck/yduck/internal/generator"
 	"github.com/yangduck/yduck/internal/tui"
 )
 
@@ -22,6 +23,8 @@ var (
 	mutedStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
 )
 
+var verbose bool
+
 func main() {
 	reg := loadRegistry()
 	cfg := config.Load()
@@ -29,11 +32,15 @@ func main() {
 	root := &cobra.Command{
 		Use:   "yduck",
 		Short: "🐤 YangDuck — 快速配置你的 Mac 开发环境",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			ylog.Init(verbose)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			app := tui.NewApp(reg, cfg)
 			return app.Run()
 		},
 	}
+	root.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "启用详细日志输出")
 
 	root.AddCommand(
 		installCmd(reg, cfg),
@@ -48,17 +55,23 @@ func main() {
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
+	ylog.Sync()
 }
 
 func loadRegistry() *recipe.Registry {
+	ylog.Init(false)
 	reg := recipe.NewRegistry()
 	recipes, err := recipe.LoadFromFS(recipe.EmbeddedRecipes, "embedded")
 	if err == nil {
 		reg.Add(recipes...)
+		ylog.S.Debugw("loaded embedded recipes", "count", len(recipes))
+	} else {
+		ylog.S.Warnw("failed to load embedded recipes", "error", err)
 	}
 	cacheDir := config.CacheDir()
 	if cached, err := recipe.LoadFromDir(cacheDir); err == nil {
 		reg.Add(cached...)
+		ylog.S.Debugw("loaded cached recipes", "dir", cacheDir, "count", len(cached))
 	}
 	return reg
 }
@@ -78,24 +91,29 @@ func installCmd(reg *recipe.Registry, cfg *config.Config) *cobra.Command {
 			for _, id := range args {
 				rec, ok := reg.Get(id)
 				if !ok {
+					ylog.S.Warnw("recipe not found", "id", id)
 					fmt.Println(errorStyle.Render("✗ 配方未找到: " + id))
 					continue
 				}
+				ylog.S.Infow("installing recipe", "id", rec.ID, "type", rec.Type)
 				switch rec.Type {
 				case recipe.TypeCLITool:
 					if rec.Install == nil {
 						continue
 					}
 					if installed, _ := brew.IsInstalled(rec.Install.Package); installed {
+						ylog.S.Debugw("already installed", "package", rec.Install.Package)
 						fmt.Println(successStyle.Render("✓ " + rec.Name + " 已安装"))
 						continue
 					}
 					fmt.Printf("正在安装 %s...\n", rec.Name)
 					if err := brew.Install(rec.Install.Package); err != nil {
+						ylog.S.Errorw("brew install failed", "package", rec.Install.Package, "error", err)
 						fmt.Println(errorStyle.Render("✗ " + err.Error()))
 						continue
 					}
 					_ = brew.RunPostInstall(rec.Install.PostInstall)
+					ylog.S.Infow("installed", "package", rec.Install.Package)
 					fmt.Println(successStyle.Render("✓ " + rec.Name + " 安装完成"))
 					if cfg.IsBeginner() {
 						quickstart.Show(rec)
@@ -107,15 +125,22 @@ func installCmd(reg *recipe.Registry, cfg *config.Config) *cobra.Command {
 					}
 					for _, t := range targets {
 						if err := mcp.Install(&rec, t, nil); err != nil {
+							ylog.S.Errorw("mcp install failed", "target", t, "recipe", rec.ID, "error", err)
 							fmt.Println(errorStyle.Render("✗ " + t + ": " + err.Error()))
 						} else {
+							ylog.S.Infow("mcp configured", "target", t, "recipe", rec.ID)
 							fmt.Println(successStyle.Render("✓ " + rec.Name + " 已配置到 " + t))
+							if t == "cursor" {
+								fmt.Println(mutedStyle.Render("  ℹ 配置已写入 .cursor/mcp.json，仅在当前项目中生效。如需在其他项目使用，请在对应项目目录重新运行安装。"))
+							}
 						}
 					}
 				case recipe.TypeSkill, recipe.TypeCommand, recipe.TypeRule:
 					if err := skill.Install(&rec); err != nil {
+						ylog.S.Errorw("skill install failed", "recipe", rec.ID, "error", err)
 						fmt.Println(errorStyle.Render("✗ " + err.Error()))
 					} else {
+						ylog.S.Infow("skill installed", "recipe", rec.ID)
 						fmt.Println(successStyle.Render("✓ " + rec.Name + " 安装完成"))
 					}
 				}
