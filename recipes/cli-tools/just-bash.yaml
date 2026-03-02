@@ -1,0 +1,25 @@
+id: just-bash
+name: just-bash
+type: cli-tool
+description: 模拟 Bash 环境，内存虚拟文件系统，专为 AI Agent 设计的安全沙盒 Shell
+tags: [ai, sandbox, bash, shell, agent, security]
+difficulty: beginner
+popularity: 80
+featured: false
+added_at: "2026-03-02"
+install:
+  method: npm
+  package: just-bash
+quickstart:
+  - title: 执行内联脚本
+    command: just-bash -c 'echo hello && ls -la'
+    explain: 在沙盒中执行 bash 命令，所有写操作都在内存中，不影响真实文件系统
+  - title: 指定项目根目录
+    command: just-bash -c 'cat package.json | head -5' --root /path/to/project
+    explain: 使用 OverlayFS 挂载指定目录，读取真实文件但写入仅在内存中
+  - title: JSON 格式输出
+    command: just-bash -c 'echo hello' --json
+    explain: 输出 JSON 格式的结果，方便程序化处理
+  - title: 交互式 Shell
+    command: just-bash
+    explain: 进入交互式沙盒 Shell，支持完整的 bash 语法
